@@ -1,0 +1,43 @@
+/* Device adaptation: phone (<640) / tablet (640-1023) / desktop (1024+). Loaded last. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:120px}
+body{min-height:100vh;min-height:100dvh;overflow-x:hidden}
+img,svg,canvas,video{max-width:100%}
+.toolbar{padding-left:max(var(--gut,14px),env(safe-area-inset-left));padding-right:max(var(--gut,14px),env(safe-area-inset-right))}
+main{padding-left:max(var(--gut,14px),env(safe-area-inset-left));padding-right:max(var(--gut,14px),env(safe-area-inset-right));padding-bottom:max(90px,calc(40px + env(safe-area-inset-bottom)))}
+.body{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{max-width:100%}
+.map{width:100%;height:clamp(260px,48vh,520px)}.map.tall{height:clamp(320px,62vh,720px)}
+.leaflet-container{touch-action:pan-x pan-y}
+input,select,textarea{max-width:100%;min-width:0}
+/* touch devices: comfortable targets, no iOS focus-zoom */
+@media (hover:none) and (pointer:coarse){
+  button,.btnlink,.segbtn,.tabs>*,select{min-height:44px}
+  input,select,textarea{font-size:16px}
+}
+/* phone */
+@media (max-width:639px){
+  main{padding-top:12px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+  .body.two,.body.macro{grid-template-columns:1fr!important}
+  .map{height:clamp(240px,42vh,380px)}
+  .card{border-radius:14px}
+  .seg{flex-wrap:wrap}
+}
+/* tablet */
+@media (min-width:640px) and (max-width:1023px){
+  main{max-width:900px;margin-inline:auto}
+  .grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important}
+  .body.two{grid-template-columns:1fr 1fr}
+  .map{height:clamp(320px,50vh,520px)}
+}
+/* desktop */
+@media (min-width:1024px){
+  main{max-width:1120px}
+  .grid{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))!important}
+}
+@media (min-width:1800px){main{max-width:1320px}html{font-size:17px}}
+/* landscape phones: keep toolbar from eating the screen */
+@media (max-height:480px) and (orientation:landscape){.toolbar{position:static}.map{height:70vh}}
+/* login/auth */
+body.auth{padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.auth-card{width:100%;max-width:420px}

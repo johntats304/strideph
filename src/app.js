@@ -354,3 +354,6 @@ wireActions();
 initMaps();
 setupSections();
 load();
+
+/* keep maps sized after rotate/resize */
+window.addEventListener("resize",()=>{clearTimeout(window.__rz);window.__rz=setTimeout(()=>{try{[pm,rm].forEach(m=>m&&m.invalidateSize())}catch(_){}},200)});
