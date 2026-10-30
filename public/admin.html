@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manage users · STRIDE</title>
+  <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+  <meta name="theme-color" content="#FC4C02">
+  
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/stride.css">
+  <link rel="stylesheet" href="/static/ig.css">
+  <script src="/static/consts.js"></script>
+  <script src="/static/store.js"></script>
+</head>
+<body>
+<div class="toolbar">
+  <strong style="flex:1"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg> Manage users</strong>
+  <div class="tb-user">
+    <span class="who"></span>
+    <a class="btnlink" href="/">Tracker</a>
+    <button class="ghost sm" id="logout">Log out</button>
+  </div>
+</div>
+<main>
+  <section class="card">
+    <h2 id="formTitle">Add user</h2>
+    <div class="grid">
+      <div><label for="f_user">Username</label><input id="f_user" autocomplete="off"></div>
+      <div><label for="f_pw" id="pwLabel">Password</label><input id="f_pw" type="text" autocomplete="new-password"></div>
+      <div><label for="f_role">Role</label>
+        <select id="f_role"><option value="user">User</option><option value="admin">Admin</option></select></div>
+      <div class="end btns" style="margin:0">
+        <button id="save">Add user</button>
+        <button class="ghost" id="cancel" hidden>Cancel</button>
+      </div>
+    </div>
+    <p id="msg" class="msg" role="status"></p>
+  </section>
+
+  <section class="card">
+    <h2>Users <small id="count"></small></h2>
+    <div class="scroll"><table id="users"></table></div>
+    <p class="note">Each user only sees their own rides, routes and profile. Deleting a user also deletes all of their data.</p>
+  </section>
+</main>
+<script src="/static/icons.js"></script>
+<script src="/static/admin.js"></script>
+</body>
+</html>

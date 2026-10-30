@@ -1,0 +1,86 @@
+(()=>{const b=e=>document.getElementById(e),C={cal:"#fc4c02",water:"#2f8cff",act:"#16a34a",wt:"#8b5cf6",sleep:"#6366f1",bp:"#e11d48",pb:"#f59e0b"},tt={Normal:"#16a34a",Elevated:"#d97706","Stage 1":"#ea580c","Stage 2":"#dc2626",Crisis:"#991b1b"},et=()=>new Date().toTimeString().slice(0,5),S=(e,s)=>s>0?Math.max(0,Math.min(100,e/s*100)):0,k=e=>Number.isFinite(+e)?+e:0,L=e=>{const s=localDay(),a=localDay(new Date(Date.now()-864e5));return e===s?"Today":e===a?"Yesterday":new Date(e+"T00:00").toLocaleDateString(void 0,{month:"short",day:"numeric"})},X=e=>new Date(e+"T00:00").toLocaleDateString(void 0,{weekday:"short"}).slice(0,3),N=e=>Math.round((new Date(localDay()+"T00:00")-new Date(e+"T00:00"))/864e5);let st=0,z=!1;function A(e,s,a,o,d,i){const c=2*Math.PI*44;return`<div class="dring"><div class="dring-fig">
+      <svg viewBox="0 0 110 110" aria-hidden="true"><circle class="trk" cx="55" cy="55" r="44"/>
+      <circle class="val" cx="55" cy="55" r="44" stroke="${s}" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${c.toFixed(1)}" data-off="${(c*(1-e/100)).toFixed(1)}"/></svg>
+      <div class="mid"><b>${d}</b><small>${i}</small></div></div>
+      <span class="lbl">${a} ${o}</span></div>`}function Y(e,s,a,o="",d=560,i=0){const h=s?52:0,w=d-h,T=Math.max(s||0,...e.map(n=>n.v),1)*1.12,g=w/e.length,r=n=>126-n/T*108;let v="";return e.forEach((n,f)=>{const j=f*g+g*.18,F=g*.64,m=r(n.v),l=s&&n.v>=s;v+=`<rect x="${j.toFixed(1)}" y="${m.toFixed(1)}" width="${F.toFixed(1)}" height="${Math.max(0,126-m).toFixed(1)}" rx="5" fill="${a}" opacity="${s&&!l?.45:1}"><title>${esc(n.l)}: ${fmt(n.v,i)}${o}</title></rect>
+        <text x="${(f*g+g/2).toFixed(1)}" y="144" text-anchor="middle" class="ax">${esc(n.l)}</text>
+        ${n.v?`<text x="${(f*g+g/2).toFixed(1)}" y="${(m-5).toFixed(1)}" text-anchor="middle" class="vl">${fmt(n.v,i)}</text>`:""}`}),s&&(v+=`<line x1="0" x2="${w}" y1="${r(s).toFixed(1)}" y2="${r(s).toFixed(1)}" stroke="${a}" stroke-dasharray="5 4" opacity=".8"/>
+      <text x="${d}" y="${(r(s)+4).toFixed(1)}" text-anchor="end" class="vl" fill="${a}" style="opacity:1;font-weight:700">goal ${fmt(s)}</text>`),`<svg viewBox="0 0 ${d} 150" class="dchart" role="img">${v}</svg>`}function at(e,s,a){if(e.length<2)return"";const o=560,d=170,i=6,$=6,c=14,y=24,h="dg"+ ++st,w=e.map(m=>m.y).concat(a>0?[a]:[]);let T=Math.min(...w),g=Math.max(...w);const r=Math.max((g-T)*.2,.5);T-=r,g+=r;const v=m=>i+m/(e.length-1)*(o-i-$),n=m=>c+(1-(m-T)/(g-T))*(d-c-y),f=e.map((m,l)=>`${l?"L":"M"}${v(l).toFixed(1)},${n(m.y).toFixed(1)}`).join(" "),j=`${f} L${v(e.length-1).toFixed(1)},${d-y} L${v(0).toFixed(1)},${d-y} Z`,F=e[e.length-1];return`<svg viewBox="0 0 ${o} ${d}" class="dchart" role="img">
+      <defs><linearGradient id="${h}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s}" stop-opacity=".28"/><stop offset="1" stop-color="${s}" stop-opacity="0"/></linearGradient></defs>
+      <path d="${j}" fill="url(#${h})"/><path d="${f}" fill="none" stroke="${s}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      ${a>0?`<line x1="0" x2="${o}" y1="${n(a).toFixed(1)}" y2="${n(a).toFixed(1)}" stroke="var(--mut)" stroke-dasharray="5 4"/><text x="${o-2}" y="${(n(a)-5).toFixed(1)}" text-anchor="end" class="vl">goal ${fmt(a,1)}</text>`:""}
+      <circle cx="${v(e.length-1).toFixed(1)}" cy="${n(F.y).toFixed(1)}" r="5" fill="${s}" stroke="var(--card)" stroke-width="2"/>
+      <text x="${i}" y="${d-6}" class="ax">${esc(e[0].x)}</text><text x="${o-$}" y="${d-6}" text-anchor="end" class="ax">${esc(F.x)}</text></svg>`}function it(e){if(e.length<2)return"";const s=560,a=150,o=6,d=6,i=12,$=12,c=Math.min(...e.map(r=>r.dia))-8,y=Math.max(...e.map(r=>r.sys))+8,h=r=>o+r/(e.length-1)*(s-o-d),w=r=>i+(1-(r-c)/(y-c))*(a-i-$),T=r=>e.map((v,n)=>`${n?"L":"M"}${h(n).toFixed(1)},${w(v[r]).toFixed(1)}`).join(" "),g=(r,v)=>r>c&&r<y?`<line x1="0" x2="${s}" y1="${w(r).toFixed(1)}" y2="${w(r).toFixed(1)}" stroke="var(--mut)" stroke-dasharray="3 5" opacity=".5"/><text x="${s-2}" y="${(w(r)-3).toFixed(1)}" text-anchor="end" class="vl">${v}</text>`:"";return`<svg viewBox="0 0 ${s} ${a}" class="dchart" role="img">${g(130,"130")}${g(80,"80")}
+      <path d="${T("sys")}" fill="none" stroke="${C.bp}" stroke-width="2.4" stroke-linejoin="round"/><path d="${T("dia")}" fill="none" stroke="#6366f1" stroke-width="2.4" stroke-linejoin="round"/></svg>
+      <p class="legend"><i style="background:${C.bp}"></i>Systolic <i style="background:#6366f1"></i>Diastolic</p>`}const u=(e,s,a="")=>`<div class="dstat"><span>${e}</span><b>${s}</b>${a?`<small>${a}</small>`:""}</div>`,B=(e,s)=>`<div class="dempty"><p>${e}</p>${s||""}</div>`,M=(e,s,a,o)=>`<section class="dcard ${e}"><header><h3>${s}</h3>${a||""}</header>${o}</section>`,_=(e,s,a)=>`<button type="button" class="dlink" data-go="${e}" ${a?`data-sub="${a}"`:""}>${s} \u2192</button>`;function ot(e,s,a,o,d,i,$){const c=e.a,y=e.settings,h=c.totals,w=localDay(),T=(e.user.username||"").replace(/^./,t=>t.toUpperCase()),g=new Date().getHours(),r=g<5?"Burning the midnight oil":g<12?"Good morning":g<18?"Good afternoon":"Good evening",v=new Date().toLocaleDateString(void 0,{weekday:"long",month:"long",day:"numeric"}),n=s?k(s.totals.kcal):0,f=k(s?s.goal:y.kcal_goal),j=s?k(s.burned.bike)+k(s.burned.pickleball):0,F=a?k(a.total):0,m=k(a?a.goal:y.water_goal),l=d&&d.stats,R=$?k($.goal):k(y.sleep_goal)||8,p=$&&$.latest,I=$&&$.stats&&$.stats.avg7,q=p&&N(p.day)<=1,U=d?k(d.goal):0,H=[];i&&i.latest&&["Stage 2","Crisis"].includes(i.latest.category)&&H.push(["bad",`Your latest blood pressure (${i.latest.sys}/${i.latest.dia}) is in the <b>${i.latest.category}</b> range. Please speak to a doctor or nurse${i.latest.category==="Crisis"?" right away":""}.`]),s&&f&&n>f*1.1&&H.push(["warn",`You are ${fmt(n-f)} kcal over today's food goal.`]),q&&p.minutes<360&&H.push(["warn",`You slept only ${sleepHM(p.minutes)} last night. Try to catch up on rest today.`]),l&&N(l.day)>14&&H.push(["info",`Your last weigh-in was ${N(l.day)} days ago.`]),g>=17&&a&&m&&F<m*.5&&H.push(["info",`Water is at ${Math.round(S(F,m))}% of goal. Time for a glass.`]);const nt=e.rides.some(t=>t.day===w),dt=o&&o.sessions.some(t=>t.day===w),ct=i&&i.avg7,rt=l&&N(l.day)<=7,G=[[s&&s.entries.length>0,"Food logged today"],[m>0&&F>=m,"Water goal reached"],[nt||dt,"Exercised today"],[q,"Sleep logged for last night"],[rt,"Weighed in this week"],[!!ct,"Blood pressure checked this week"]],K=G.filter(t=>t[0]).length,D=s?s.totals:{protein:0,carbs:0,fat:0},Z=[k(D.protein)*4,k(D.carbs)*4,k(D.fat)*9],J=Z.reduce((t,x)=>t+x,0),$t=J?`<div class="macro">${["#2f8cff","#f59e0b","#e11d48"].map((t,x)=>`<i style="width:${Z[x]/J*100}%;background:${t}"></i>`).join("")}</div>
+         <p class="legend"><i style="background:#2f8cff"></i>Protein ${fmt(D.protein)} g <i style="background:#f59e0b"></i>Carbs ${fmt(D.carbs)} g <i style="background:#e11d48"></i>Fat ${fmt(D.fat)} g</p>`:'<p class="hint">No meals logged yet today.</p>',P=[];e.rides.slice(0,6).forEach(t=>P.push({d:t.day,i:IC("bike"),t:`Ride ${fmt(t.km,1)} km`,s:`${fmt(t.minutes)} min \xB7 ${fmt(t.kmh,1)} km/h \xB7 ${fmt(t.kcal_best)} kcal`,k:"r"+t.id})),(o?o.sessions:[]).slice(0,6).forEach(t=>P.push({d:t.day,i:IC("paddle"),t:`Pickleball ${fmt(t.minutes)} min`,s:`${esc(t.format||"")}${t.wins||t.losses?` \xB7 ${t.wins}W-${t.losses}L`:""}`,k:"p"+t.id})),(d?d.entries:[]).slice(0,4).forEach(t=>P.push({d:t.day,i:IC("scale"),t:`Weigh-in ${fmt(t.kg,1)} kg`,s:esc(t.notes||""),k:"w"+t.id})),(i?i.entries:[]).slice(0,4).forEach(t=>P.push({d:t.day,i:IC("pulse"),t:`BP ${t.sys}/${t.dia}`,s:`${t.category}${t.pulse?` \xB7 pulse ${t.pulse}`:""}`,k:"b"+t.id})),($?$.entries:[]).slice(0,4).forEach(t=>P.push({d:t.day,i:IC("moon"),t:`Slept ${sleepHM(t.minutes)}`,s:`${sleepClock(t.bed)} \u2192 ${sleepClock(t.wake)}${t.quality?` \xB7 ${"\u2605".repeat(t.quality)}`:""}`,k:"s"+t.id})),P.sort((t,x)=>x.d>t.d?1:x.d<t.d?-1:x.k.localeCompare(t.k));const Q=P.slice(0,8).map(t=>`<li><span class="ico">${t.i}</span><div><b>${esc(t.t)}</b><small>${t.s}</small></div><time>${L(t.d)}</time></li>`).join(""),ut=[[IC("bike"),"Total distance",`${fmt(h.km,1)} <u>km</u>`,`${fmt(h.rides)} rides`],[IC("clock"),"Time in saddle",`${fmt(h.hours,1)} <u>h</u>`,`avg ${fmt(h.avg_kmh,1)} km/h`],[IC("flame"),"Ride calories",`${fmt(h.kcal)} <u>kcal</u>`,`\u2248 ${fmt(h.fat_kg,1)} kg fat`],[IC("moon"),"Avg sleep",I?sleepHM(I.minutes):"\u2014",I?`last ${I.n} night${I.n===1?"":"s"}`:"no nights logged"],[IC("leaf"),"CO\u2082 avoided",`${fmt(h.co2,1)} <u>kg</u>`,"vs. driving"],[IC("coins"),"Transport saved",`${fmt(h.money)}`,`at ${fmt(y.cost_km,1)} per km`]].map(([t,x,ht,gt])=>`<div class="dkpi"><span class="ico">${t}</span><div><small>${x}</small><b>${ht}</b><em>${gt}</em></div></div>`).join(""),W=c.bests,E=e.rides[0],mt=c.tips.filter(t=>!t.startsWith("This week:")).slice(0,4).map(t=>`<li>${esc(t)}</li>`).join("");b("dashRoot").innerHTML=`
+    <section class="dhero">
+      <div><p class="date">${v}</p><h1>${r}, ${esc(T)}</h1>
+        <p class="sub">${K===G.length?"Everything is checked off today. Great work!":`${K} of ${G.length} daily check-ins done.`}</p></div>
+      <div class="dquick">
+        <button type="button" data-act="ride">${IC("bike")} Log ride</button>
+        <button type="button" data-act="food">${IC("utensils")} Log food</button>
+        <button type="button" data-act="water">${IC("droplet")} +250 ml</button>
+        <button type="button" data-act="sleep">${IC("moon")} Sleep</button>
+        <button type="button" data-act="weight">${IC("scale")} Weigh-in</button>
+        <button type="button" data-act="bp">${IC("pulse")} BP</button>
+      </div>
+    </section>
+
+    ${H.length?`<div class="dalerts">${H.map(([t,x])=>`<div class="dalert ${t}">${x}</div>`).join("")}</div>`:""}
+
+    <section class="drings">
+      ${A(S(n,f),C.cal,IC("utensils"),"Calories today",fmt(n),`of ${fmt(f)} kcal`)}
+      ${A(S(F,m),C.water,IC("droplet"),"Water today",`${(F/1e3).toFixed(1)}L`,`of ${(m/1e3).toFixed(1)} L`)}
+      ${A(S(q?p.minutes/60:0,R),C.sleep,IC("moon"),"Sleep last night",q?sleepHM(p.minutes).replace(/ (\d+)m/,'<small style="display:inline;font-size:.6em">$1m</small>'):"\u2014",q?`goal ${fmt(R,1)} h`:"not logged")}
+      ${l&&U>0?A(S(Math.max(0,l.start-l.current),Math.max(.1,l.start-U)),C.wt,IC("scale"),"Weight goal",`${fmt(l.current,1)}`,`goal ${fmt(U,1)} kg`):A(l?100:0,C.wt,IC("scale"),"Current weight",l?fmt(l.current,1):"\u2014",l?`BMI ${fmt(l.bmi,1)}`:"no weigh-ins")}
+    </section>
+
+    <section class="dkpis">${ut}</section>
+
+    <div class="dgrid">
+      ${M("span7","Sleep",_("sleep","Sleep log"),p?`
+        <div class="sleepnow"><div><small>${L(p.day)} \xB7 bed \u2192 up</small><b>${sleepClock(p.bed)} <span>\u2192</span> ${sleepClock(p.wake)}</b></div>
+          <div class="dur"><b>${sleepHM(p.minutes)}</b><em class="pill" style="background:${p.minutes>=R*60-15?"#16a34a":"#d97706"}">${p.minutes>=R*60-15?"Goal met":sleepHM(R*60-p.minutes)+" short"}</em></div></div>
+        ${p.quality?`<p class="stars">${"\u2605".repeat(p.quality)}<span>${"\u2605".repeat(5-p.quality)}</span></p>`:""}
+        <div class="dstats">${I?u("7-night avg",sleepHM(I.minutes))+u("Usual bedtime",sleepClock(I.bed))+u("Usual wake-up",sleepClock(I.wake))+u("Sleep debt",sleepHM(I.debt),"last 7 nights"):""}</div>
+        ${Y($.week.map(t=>({l:X(t.day),v:Math.round(t.hours*10)/10})),R,C.sleep," h",560,1)}`:B("No sleep logged yet.",'<button type="button" data-act="sleep">Log last night</button>'))}
+
+      ${M("span5","Today's energy balance",_("food","Food log"),`
+        <div class="dstats">${u("Eaten",`${fmt(n)}<u>kcal</u>`)}${u("Burned",`${fmt(j)}<u>kcal</u>`,"exercise")}${u("Remaining",`${fmt(f-n)}<u>kcal</u>`,"vs goal")}</div>
+        <div class="bar thick"><i style="width:${S(n,f)}%"></i></div>${$t}`)}
+
+      ${M("span7","Weight trend",_("weight","Weight log"),l?`
+        <div class="dstats">${u("Current",`${fmt(l.current,1)}<u>kg</u>`,L(l.day))}
+          ${u("Change",`${l.change>0?"+":""}${fmt(l.change,1)}<u>kg</u>`,"since start")}
+          ${u("BMI",fmt(l.bmi,1))}
+          ${l.to_goal!=null?u("To goal",`${fmt(Math.abs(l.to_goal),1)}<u>kg</u>`,l.to_goal>0?"to lose":"past goal"):""}</div>
+        ${at(d.entries.slice(0,30).reverse().map(t=>({x:L(t.day),y:t.kg})),C.wt,U)||'<p class="hint">Add another weigh-in to see the trend.</p>'}`:B("No weigh-ins yet.",'<button type="button" data-act="weight">Add first weigh-in</button>'))}
+
+      ${M("span5","Blood pressure",_("bp","BP log"),i&&i.latest?`
+        <div class="bpnow"><b>${i.latest.sys}<span>/</span>${i.latest.dia}</b><em class="pill" style="background:${tt[i.latest.category]}">${i.latest.category}</em><small>${L(i.latest.day)}${i.latest.pulse?` \xB7 pulse ${i.latest.pulse}`:""}</small></div>
+        <div class="dstats">${i.avg7?u("7-day avg",`${fmt(i.avg7.sys)}/${fmt(i.avg7.dia)}`,i.avg7.category):""}${i.avg30?u("30-day avg",`${fmt(i.avg30.sys)}/${fmt(i.avg30.dia)}`,i.avg30.category):""}${u("Readings",fmt(i.total))}</div>
+        ${it(i.points.slice(-20))}`:B("No blood pressure readings yet.",'<button type="button" data-act="bp">Add a reading</button>'))}
+
+      ${M("span4","Hydration & food \xB7 last 7 days","",`
+        <h4>Water (ml)</h4>${a?Y(a.week.map(t=>({l:X(t.day),v:Math.round(t.value)})),m,C.water,"",320):""}
+        <h4>Calories (kcal)</h4>${s?Y(s.week.map(t=>({l:X(t.day),v:Math.round(t.value)})),f,C.cal,"",320):""}`)}
+
+      ${M("span4","Cycling highlights",_("exercise","All rides","bike"),e.rides.length?`
+        <div class="dstats">${u("Longest",`${fmt(W.longest.km,1)}<u>km</u>`,L(W.longest.day))}${u("Fastest",`${fmt(W.fastest.kmh,1)}<u>km/h</u>`,L(W.fastest.day))}${u("Top burn",`${fmt(W.burn.kcal)}<u>kcal</u>`,L(W.burn.day))}</div>
+        <div class="lastride"><span class="ico">${IC("bike")}</span><div><small>Latest ride \xB7 ${L(E.day)}</small><b>${esc(E.route||"Ride")}</b>
+          <em>${fmt(E.km,1)} km \xB7 ${fmt(E.minutes)} min \xB7 ${fmt(E.kmh,1)} km/h \xB7 ${fmt(E.kcal_best)} kcal</em></div></div>
+        ${c.trend!=null?`<p class="trend ${c.trend>=0?"up":"down"}">${c.trend>=0?"\u25B2":"\u25BC"} Average speed ${c.trend>=0?"up":"down"} ${fmt(Math.abs(c.trend),1)}% over time</p>`:""}`:B("No rides logged yet.",'<button type="button" data-act="ride">Log your first ride</button>'))}
+
+      ${M("span4","Pickleball",_("exercise","Sessions","pickle"),o&&o.totals.sessions?`
+        <div class="dstats">${u("This week",`${fmt(o.totals.this_week)}<u>min</u>`,`${o.totals.this_week_sessions} session${o.totals.this_week_sessions===1?"":"s"}`)}${u("Win rate",o.totals.win_rate==null?"\u2014":`${fmt(o.totals.win_rate)}<u>%</u>`,`${o.totals.wins}W \xB7 ${o.totals.losses}L`)}${u("All time",`${fmt(o.totals.hours,1)}<u>h</u>`,`${o.totals.sessions} session${o.totals.sessions===1?"":"s"}`)}</div>
+        ${Y(o.weeks.map(t=>({l:t.label,v:Math.round(t.minutes)})),0,C.pb," min",320)}`:B("No pickleball sessions yet."))}
+
+      ${M("span4","Today's checklist","",`<ul class="dcheck">${G.map(([t,x])=>`<li class="${t?"ok":""}"><span>${t?"\u2713":""}</span>${x}</li>`).join("")}</ul>
+        <div class="bar thick"><i style="width:${K/G.length*100}%"></i></div>`)}
+
+      ${M("span4","Recent activity","",Q?`<ul class="dfeed">${Q}</ul>`:B("Nothing logged yet. Use the quick buttons above to start."))}
+
+      ${M("span4","Insights",_("exercise","More","bike"),`<ul class="dtips">${mt}</ul>
+        <p class="dsub">Heart-rate max \u2248 ${fmt(c.body.hrmax)} bpm \xB7 BMR ${fmt(c.body.bmr)} kcal/day</p>`)}
+    </div>`,requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll("#dashRoot .dring .val").forEach(t=>t.style.strokeDashoffset=t.dataset.off)))}async function O(){if(z)return;z=!0;const e=b("dashRoot");e.dataset.ready||(e.innerHTML='<div class="dskel"><i></i><i></i><i></i><i></i></div>');const s=localDay(),a=o=>o.catch(()=>null);try{const[o,d,i,$,c,y,h]=await Promise.all([api("/api/data"),a(api(`/api/food?day=${s}`)),a(api(`/api/water?day=${s}`)),a(api("/api/pickleball")),a(api("/api/weight")),a(api("/api/bp")),a(api("/api/sleep"))]);ot(o,d&&d.totals?d:null,i&&i.week?i:null,$&&$.totals?$:null,c&&c.entries?c:null,y&&y.entries?y:null,h&&h.entries?h:null),e.dataset.ready="1"}catch(o){e.innerHTML='<div class="dempty"><p>Could not load the dashboard.</p><button type="button" id="dashRetry">Try again</button></div>'}z=!1}function lt(e,s){showTab("exercise",e),setTimeout(()=>{const a=b(s);a&&(a.open=!0,setTimeout(()=>a.scrollIntoView({behavior:"smooth",block:"start"}),60))},80)}const V={ride:()=>lt("bike","d_log"),food:()=>{showTab("food"),setTimeout(()=>b("f_name")&&b("f_name").focus(),150)},sleep:()=>{showTab("sleep"),setTimeout(()=>b("sl_bed")&&b("sl_bed").focus(),150)},weight:()=>{showTab("weight"),setTimeout(()=>b("wt_kg")&&b("wt_kg").focus(),150)},bp:()=>{showTab("bp"),setTimeout(()=>b("bp_sys")&&b("bp_sys").focus(),150)},water:async e=>{e.disabled=!0,await api("/api/water","POST",{day:localDay(),ml:250,time:et()}),await O()}};b("dashRoot").addEventListener("click",e=>{const s=e.target.closest("[data-act]"),a=e.target.closest("[data-go]");s&&V[s.dataset.act]?V[s.dataset.act](s):a?showTab(a.dataset.go,a.dataset.sub):e.target.id==="dashRetry"&&O()}),b("dashRefresh").addEventListener("click",O),window.loadDashboard=O})();

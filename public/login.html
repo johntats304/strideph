@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · STRIDE</title>
+  <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+  <meta name="theme-color" content="#FC4C02">
+  
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/stride.css">
+  <link rel="stylesheet" href="/static/ig.css">
+  <script src="/static/consts.js"></script>
+  <script src="/static/store.js"></script>
+</head>
+<body class="auth">
+  <form class="card auth-card" id="loginForm" autocomplete="on">
+    <img class="auth-logo" src="/static/logo.svg" alt="">
+    <h1>STRIDE</h1>
+    <p class="hint">Sign in to continue<br><small>First time? Use admin / admin123, then change it in your profile.</small></p>
+    <label for="u">Username</label>
+    <input id="u" name="username" autocomplete="username" autofocus required>
+    <label for="p" style="margin-top:10px">Password</label>
+    <div class="pw"><input id="p" name="password" type="password" autocomplete="current-password" required><button type="button" id="eye" aria-label="Show password" title="Show / hide password"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg></button></div>
+    <button type="submit" style="margin-top:14px" id="go">Sign in</button>
+    <p id="err" class="msg err" role="alert"></p>
+  </form>
+<script src="/static/icons.js"></script>
+<script>
+const f = document.getElementById("loginForm"), err = document.getElementById("err"), go = document.getElementById("go");
+const shake = () => { f.classList.remove("shake"); void f.offsetWidth; f.classList.add("shake"); };
+document.getElementById("eye").addEventListener("click", () => { const p = f.p; p.type = p.type === "password" ? "text" : "password"; });
+f.addEventListener("submit", async (e) => {
+  e.preventDefault(); err.textContent = ""; go.disabled = true;
+  try {
+    const r = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: f.u.value, password: f.p.value }) });
+    const j = await r.json();
+    if (j.ok) { try { localStorage.setItem("ct_tab", JSON.stringify({ t: "dashboard", s: "bike" })); } catch (_) {} location.href = "/"; } else { err.textContent = j.error || "Sign-in failed."; shake(); }
+  } catch (x) { err.textContent = "Could not reach the server."; shake(); }
+  go.disabled = false;
+});
+</script>
+</body>
+</html>

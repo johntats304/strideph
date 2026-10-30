@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>STRIDE</title>
+  <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+  <meta name="theme-color" content="#FC4C02">
+  <script>try{var t=localStorage.getItem("ct_theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/dashboard.css">
+  <link rel="stylesheet" href="/static/analytics.css">
+  <link rel="stylesheet" href="/static/stride.css">
+  <link rel="stylesheet" href="/static/ig.css">
+  <script src="/static/consts.js"></script>
+  <script src="/static/store.js"></script>
+</head>
+<body class="app">
+<header class="topbar" id="topbar">
+  <div class="toolbar main">
+    <div class="brand" id="brandHome" role="button" tabindex="0" style="cursor:pointer" aria-label="STRIDE - go to dashboard"><img src="/static/logo.svg" alt=""><span>Stride</span></div>
+    <div class="tabs" id="mainTabs" role="tablist">
+      <button class="tab" data-tab="dashboard"><i><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></i><span>Dashboard</span></button>
+      <button class="tab" data-tab="exercise"><i><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="17" r="3.5"/><circle cx="18" cy="17" r="3.5"/><path d="M6 17l4-8h5l3 8M10 9l2 8M9 6h3"/></svg></i><span>Exercise</span></button>
+      <button class="tab" data-tab="food"><i><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8a2 2 0 0 0 2 2v8M11 3v8a2 2 0 0 1-2 2M17 21V3c-2.5 1.5-3.5 4-3.5 7.5H17"/></svg></i><span>Food</span></button>
+      <button class="tab" data-tab="water"><i><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3.5 4.5 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 2.5-6.5 6-11z"/></svg></i><span>Water</span></button>
+      <button class="tab" data-tab="sleep"><i><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></i><span>Sleep</span></button>
+      <button class="tab" data-tab="weight"><i><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 9a5 5 0 0 1 8 0M12 9l2-2"/></svg></i><span>Weight</span></button>
+      <button class="tab" data-tab="bp"><i><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg></i><span>Blood pressure</span></button>
+      <button class="tab" data-tab="analytics"><i><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></i><span>Analytics</span></button>
+    </div>
+    <div class="tb-user">
+      <span class="who" data-i=""></span>
+      <a class="btnlink" id="usersLink" href="/admin" style="display:none">Users</a>
+      <button class="ghost sm icon" id="themeBtn" title="Switch light / dark" aria-label="Switch light or dark theme"><svg class="ic" aria-hidden="true"><use href="#i-theme"/></svg></button>
+      <button class="ghost sm" id="logout">Log out</button>
+    </div>
+  </div>
+
+  <div class="toolbar sub" id="subbar">
+    <div class="seg" id="subTabs" role="tablist" aria-label="Activity type">
+      <span class="thumb" aria-hidden="true"></span>
+      <button class="segbtn" data-sub="bike"><svg class="ic" aria-hidden="true"><use href="#i-bike"/></svg> Bike</button>
+      <button class="segbtn" data-sub="pickle"><svg class="ic" aria-hidden="true"><use href="#i-paddle"/></svg> Pickleball</button>
+    </div>
+    <div class="tb-actions" id="bikeActions">
+      <button class="ghost sm" id="expandAll">Expand<span class="lg"> all</span></button>
+      <button class="ghost sm" id="collapseAll">Collapse<span class="lg"> all</span></button>
+    </div>
+  </div>
+
+  <nav class="toolbar nav" id="bikeNav" aria-label="Bike sections">
+    <div class="chips" id="chips">
+      <button class="chip" data-target="d_log">Log ride</button>
+      <button class="chip" data-target="d_map">Map</button>
+      <button class="chip" data-target="d_history">History</button>
+      <button class="chip" data-target="d_overview">Overview</button>
+      <button class="chip" data-target="d_insights">Insights</button>
+      <button class="chip" data-target="d_body">Body</button>
+      <button class="chip" data-target="d_level">Activity</button>
+      <button class="chip" data-target="d_zones">HR zones</button>
+      <button class="chip" data-target="d_trends">Trends</button>
+      <button class="chip" data-target="d_records">Records</button>
+      <button class="chip" data-target="d_settings">Profile</button>
+    </div>
+  </nav>
+  <nav class="toolbar nav" id="pickleNav" aria-label="Pickleball sections" hidden>
+    <div class="chips" id="pbChips">
+      <button class="chip" data-target="pb_log">Log session</button>
+      <button class="chip" data-target="pb_trend">Weekly minutes</button>
+      <button class="chip" data-target="pb_hist">History</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+<section id="panel_dashboard">
+  <div class="dtoprow"><button type="button" id="dashRefresh" title="Reload the latest numbers">↻ Refresh</button></div>
+  <div id="dashRoot" aria-live="polite"></div>
+</section>
+<section id="panel_exercise">
+<div id="sub_bike">
+  <h1><svg class="ic" aria-hidden="true"><use href="#i-bike"/></svg> Cycling</h1>
+
+  <section class="card">
+    <h2>Weekly goal <small>moderate-equivalent minutes · hard minutes count double (WHO)</small></h2>
+    <div class="bar"><i id="goalBar"></i></div>
+    <p id="goalText" class="goal-text"></p>
+  </section>
+
+  <div class="grid hero" id="hero"></div>
+
+  <h3 class="grp">Track</h3>
+
+  <details class="sec" id="d_log">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-bike"/></svg> Log a ride</span><span class="sum">Pin start &amp; end, distance auto-computed</span></summary>
+    <div class="body">
+      <p class="hint">Click the map to drop pin A (start), then B (end). Drag pins to adjust.</p>
+      <div id="pickMap" class="map"></div>
+      <p id="routeInfo" class="msg"></p>
+      <div class="btns"><button class="ghost" id="clearPins">Clear pins</button>
+        <button class="ghost" id="savePreset">Save pins as preset route</button>
+        <button class="ghost" id="delPreset">Delete selected preset</button></div>
+      <div class="grid">
+        <div><label for="day">Date</label><input type="date" id="day"></div>
+        <div><label for="route">Preset route</label><select id="route"></select></div>
+        <div><label for="km">Distance (km, auto from pins)</label><input type="number" step="0.1" id="km"></div>
+        <div><label for="min">Time (minutes)</label><input type="number" id="min"></div>
+        <div><label for="elev">Climb (m, auto)</label><input type="number" id="elev"></div>
+        <div><label for="kg">Body weight (kg)</label><input type="number" step="0.1" id="kg"></div>
+        <div><label for="bike">Bike weight (kg)</label><input type="number" step="0.1" id="bike"></div>
+        <div><label for="load">Bag / water (kg)</label><input type="number" step="0.1" id="load"></div>
+        <div><label for="notes">Notes</label><input id="notes" placeholder="wind, heat, effort"></div>
+        <div class="end"><button id="saveRide">Save ride</button></div>
+      </div>
+      <p id="msg" class="msg"></p>
+    </div>
+  </details>
+
+  <details class="sec" id="d_map">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-map"/></svg> Map of all rides</span><span class="sum" id="sum_map"></span></summary>
+    <div class="body"><label for="rideFilter">Show</label><select id="rideFilter"></select>
+      <div id="rideMap" class="map tall" style="margin-top:8px"></div><p id="mapNote" class="note"></p></div>
+  </details>
+
+  <details class="sec" id="d_history">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-clipboard"/></svg> Ride history</span><span class="sum" id="sum_history"></span></summary>
+    <div class="body"><div class="scroll"><table id="history"></table></div></div>
+  </details>
+
+  <h3 class="grp">Health analytics</h3>
+
+  <details class="sec" id="d_overview">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-bars"/></svg> Overview &amp; totals</span><span class="sum" id="sum_overview"></span></summary>
+    <div class="body"><div class="grid" id="kpis"></div></div>
+  </details>
+
+  <details class="sec" id="d_insights">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> Insights</span><span class="sum" id="sum_insights"></span></summary>
+    <div class="body"><ul id="tips"></ul></div>
+  </details>
+
+  <details class="sec" id="d_body">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-person"/></svg> Body &amp; energy</span><span class="sum" id="sum_body"></span></summary>
+    <div class="body"><div id="body"></div></div>
+  </details>
+
+  <details class="sec" id="d_level">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg> Activity level &amp; projections</span><span class="sum" id="sum_level"></span></summary>
+    <div class="body"><div id="level"></div></div>
+  </details>
+
+  <details class="sec" id="d_zones">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-heart"/></svg> Heart-rate zones</span><span class="sum" id="sum_zones"></span></summary>
+    <div class="body"><p class="hint" id="hrNote"></p><div class="scroll"><table id="zones"></table></div></div>
+  </details>
+
+  <h3 class="grp">Progress</h3>
+
+  <details class="sec" id="d_trends">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-trend"/></svg> Trends &amp; charts</span><span class="sum" id="sum_trends"></span></summary>
+    <div class="body two">
+      <div><h4>Moderate-equivalent min / week</h4><svg id="cWeek" viewBox="0 0 600 150"></svg></div>
+      <div><h4>Body weight (kg)</h4><svg id="cWeight" viewBox="0 0 600 150"></svg></div>
+      <div><h4>Average speed (km/h)</h4><svg id="cSpeed" viewBox="0 0 600 150"></svg></div>
+      <div><h4>Estimated power (W)</h4><svg id="cWatt" viewBox="0 0 600 150"></svg></div>
+    </div>
+  </details>
+
+  <details class="sec" id="d_records">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-trophy"/></svg> Monthly summary &amp; personal bests</span><span class="sum" id="sum_records"></span></summary>
+    <div class="body two">
+      <div><h4>Monthly summary</h4><div class="scroll"><table id="months"></table></div></div>
+      <div><h4>Personal bests</h4><div class="scroll"><table id="bests"></table></div></div>
+    </div>
+  </details>
+
+  <h3 class="grp">Setup</h3>
+
+  <details class="sec" id="d_settings">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-gear"/></svg> Profile &amp; settings</span><span class="sum" id="sum_settings"></span></summary>
+    <div class="body"><div class="grid">
+      <div><label for="s_kg">Body weight (kg)</label><input type="number" step="0.1" id="s_kg"></div>
+      <div><label for="s_h">Height (cm)</label><input type="number" id="s_h"></div>
+      <div><label for="s_bike">Bike weight (kg)</label><input type="number" step="0.1" id="s_bike"></div>
+      <div><label for="s_load">Bag / water (kg)</label><input type="number" step="0.1" id="s_load"></div>
+      <div><label for="s_age">Age</label><input type="number" id="s_age"></div>
+      <div><label for="s_sex">Sex (for BMR)</label><select id="s_sex"><option>male</option><option>female</option></select></div>
+      <div><label for="s_goalkg">Goal weight (kg, 0 = none)</label><input type="number" step="0.1" id="s_goalkg"></div>
+      <div><label for="s_cost">Alt. travel cost (₱/km)</label><input type="number" id="s_cost"></div>
+      <div><label for="s_goal">Weekly goal (min)</label><input type="number" id="s_goal"></div>
+      <div class="end"><button id="saveSettings">Save profile</button></div>
+    </div>
+    <p id="sMsg" class="msg"></p>
+    <h4 style="margin-top:14px">Change password</h4>
+    <div class="grid">
+      <div><label for="pw_cur">Current password</label><input type="password" id="pw_cur" autocomplete="current-password"></div>
+      <div><label for="pw_new">New password</label><input type="password" id="pw_new" autocomplete="new-password"></div>
+      <div class="end"><button id="changePw">Change password</button></div>
+    </div>
+    <p id="pwMsg" class="msg"></p></div>
+  </details>
+
+  <p class="note">Calories are a best estimate: the average of a MET-based figure (Compendium of Physical
+    Activities) and a physics model (rolling + air drag + climbing, 24% efficiency) using your body, bike and
+    load weight. Risk figures come from observational cohort studies. Educational only, not medical advice.</p>
+</div>
+
+<div id="sub_pickle" hidden>
+  <h1><svg class="ic" aria-hidden="true"><use href="#i-paddle"/></svg> Pickleball sessions</h1>
+  <div class="grid hero" id="pbKpis"></div>
+
+  <details class="sec" id="pb_log" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Log a session</span><span class="sum">Calories estimated from duration &amp; intensity</span></summary>
+    <div class="body"><div class="grid">
+      <div><label for="pb_day">Date</label><input type="date" id="pb_day"></div>
+      <div><label for="pb_min">Duration (minutes)</label><input type="number" id="pb_min" min="1"></div>
+      <div><label for="pb_fmt">Format</label><select id="pb_fmt"><option value="doubles">Doubles</option><option value="singles">Singles</option><option value="drills">Drills / practice</option></select></div>
+      <div><label for="pb_int">Intensity</label><select id="pb_int"><option value="casual">Casual</option><option value="recreational" selected>Recreational</option><option value="competitive">Competitive</option></select></div>
+      <div><label for="pb_w">Games won</label><input type="number" id="pb_w" min="0"></div>
+      <div><label for="pb_l">Games lost</label><input type="number" id="pb_l" min="0"></div>
+      <div><label for="pb_kg">Body weight (kg)</label><input type="number" step="0.1" id="pb_kg"></div>
+      <div><label for="pb_notes">Notes</label><input id="pb_notes" placeholder="court, partner, how it felt"></div>
+      <div class="end"><button id="pb_save">Save session</button></div>
+    </div><p id="pbMsg" class="msg"></p></div>
+  </details>
+
+  <details class="sec" id="pb_trend">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-trend"/></svg> Minutes per week</span><span class="sum" id="sum_pbt"></span></summary>
+    <div class="body"><svg id="cPb" viewBox="0 0 600 150"></svg></div>
+  </details>
+
+  <details class="sec" id="pb_hist">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-clipboard"/></svg> Session history</span><span class="sum" id="sum_pbh"></span></summary>
+    <div class="body"><div class="scroll"><table id="pbHist"></table></div></div>
+  </details>
+  <p class="note">Calories = MET × body weight × hours, using approximate MET values (casual 3.5, recreational 4.5,
+    competitive 6.0). Educational only, not medical advice.</p>
+</div>
+</section>
+
+<section id="panel_food" hidden>
+  <h1><svg class="ic" aria-hidden="true"><use href="#i-utensils"/></svg> Food intake</h1>
+  <div class="card">
+    <div class="grid">
+      <div><label for="f_day">Date</label><input type="date" id="f_day"></div>
+      <div class="end"><button class="ghost" id="f_today">Today</button></div>
+      <div><label for="f_goal">Daily calorie goal (kcal)</label><input type="number" id="f_goal"></div>
+      <div class="end"><button class="ghost" id="f_saveGoal">Save goal</button></div>
+    </div>
+    <div class="bar"><i id="fBar"></i></div>
+    <div id="fSummary" style="margin-top:8px"></div>
+  </div>
+
+  <details class="sec" id="f_macro_sec" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-hexagon"/></svg> Macro targets</span><span class="sum" id="sum_macro"></span></summary>
+    <div class="body macro">
+      <div class="macro-ctl">
+        <p class="hint">Set your split of calories. Drag one slider and the other two rebalance so the total stays 100%. Tap the lock beside a macro to keep it fixed while you adjust the others.</p>
+        <div class="mrow"><label for="m_protein_r"><i class="dot" style="background:#4aa3df"></i>Protein</label>
+          <input type="range" id="m_protein_r" min="0" max="100" step="1" data-m="protein">
+          <span class="mnum"><button type="button" class="ghost mlock" id="m_protein_l" data-lock="protein" aria-pressed="false" title="Lock protein: it stays put while you adjust the others"><svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg></button><input type="number" id="m_protein" min="0" max="100" data-m="protein">%</span><small id="m_protein_g"></small></div>
+        <div class="mrow"><label for="m_carbs_r"><i class="dot" style="background:#e09f00"></i>Carbs</label>
+          <input type="range" id="m_carbs_r" min="0" max="100" step="1" data-m="carbs">
+          <span class="mnum"><button type="button" class="ghost mlock" id="m_carbs_l" data-lock="carbs" aria-pressed="false" title="Lock carbs: it stays put while you adjust the others"><svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg></button><input type="number" id="m_carbs" min="0" max="100" data-m="carbs">%</span><small id="m_carbs_g"></small></div>
+        <div class="mrow"><label for="m_fat_r"><i class="dot" style="background:#9b6bd1"></i>Fat</label>
+          <input type="range" id="m_fat_r" min="0" max="100" step="1" data-m="fat">
+          <span class="mnum"><button type="button" class="ghost mlock" id="m_fat_l" data-lock="fat" aria-pressed="false" title="Lock fat: it stays put while you adjust the others"><svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg></button><input type="number" id="m_fat" min="0" max="100" data-m="fat">%</span><small id="m_fat_g"></small></div>
+        <p class="note" id="mTotal"></p>
+        <div class="quick" id="mPresets">
+          <button class="ghost" data-p="25,50,25">Balanced</button>
+          <button class="ghost" data-p="35,40,25">High protein</button>
+          <button class="ghost" data-p="30,25,45">Lower carb</button>
+          <button class="ghost" data-p="15,60,25">Endurance</button>
+        </div>
+      </div>
+      <div class="macro-viz">
+        <div class="seg" id="mView" data-on="a" role="tablist" aria-label="Chart view">
+          <span class="thumb" aria-hidden="true"></span>
+          <button class="segbtn on" data-v="share">Share of calories</button>
+          <button class="segbtn" data-v="grams">Grams vs target</button>
+        </div>
+        <svg id="cMacro" viewBox="0 0 400 320" role="img" aria-label="Macro spider chart"></svg>
+        <div id="mStatus"></div>
+      </div>
+    </div>
+  </details>
+
+  <details class="sec" id="f_add_sec" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Add food</span><span class="sum">for the selected date</span></summary>
+    <div class="body">
+      <div id="fRecent" class="quick" style="margin-bottom:10px"></div>
+      <div class="grid">
+        <div><label for="f_meal">Meal</label><select id="f_meal"><option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option></select></div>
+        <div><label for="f_name">Food</label><input id="f_name" placeholder="e.g. rice with chicken"></div>
+        <div><label for="f_kcal">Calories (kcal)</label><input type="number" id="f_kcal" min="0"></div>
+        <div><label for="f_p">Protein (g)</label><input type="number" id="f_p" min="0" step="0.1"></div>
+        <div><label for="f_c">Carbs (g)</label><input type="number" id="f_c" min="0" step="0.1"></div>
+        <div><label for="f_f">Fat (g)</label><input type="number" id="f_f" min="0" step="0.1"></div>
+        <div class="end"><button id="f_add">Add food</button></div>
+      </div>
+      <p id="fMsg" class="msg"></p>
+    </div>
+  </details>
+
+  <details class="sec" id="f_upload_sec">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-upload"/></svg> Upload food</span><span class="sum">log from a photo, label or menu via Claude</span></summary>
+    <div class="body">
+      <p class="hint"><b>1.</b> Copy the instructions below and send them to Claude along with your food photo, nutrition label or description.
+        <b>2.</b> Paste Claude's reply here (or upload it as a .json / .txt file) and press Import.</p>
+      <label for="fu_prompt">Instructions to give Claude</label>
+      <textarea id="fu_prompt" rows="12" readonly></textarea>
+      <div class="quick" style="margin:8px 0 14px"><button class="ghost" id="fu_copy" type="button"><svg class="ic" aria-hidden="true"><use href="#i-clipboard"/></svg> Copy instructions</button></div>
+      <label for="fu_file">Upload Claude's reply (.json or .txt)</label>
+      <input type="file" id="fu_file" accept=".json,.txt,application/json,text/plain">
+      <label for="fu_text" style="margin-top:10px;display:block">…or paste it here</label>
+      <textarea id="fu_text" rows="7" placeholder='[{"meal":"lunch","name":"Chicken rice bowl","kcal":650,"protein":42,"carbs":70,"fat":18}]'></textarea>
+      <div class="quick" style="margin-top:8px"><button id="fu_import" type="button">Import food</button></div>
+      <p class="note">Items without a "day" go on the date selected above. Max 50 items per upload.</p>
+      <p id="fuMsg" class="msg"></p>
+    </div>
+  </details>
+
+  <details class="sec" id="f_list_sec" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-clipboard"/></svg> Eaten on this day</span><span class="sum" id="sum_fl"></span></summary>
+    <div class="body"><div class="scroll"><table id="fList"></table></div></div>
+  </details>
+
+  <details class="sec" id="f_trend_sec">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-trend"/></svg> Last 7 days</span><span class="sum">calories per day</span></summary>
+    <div class="body"><svg id="cFood" viewBox="0 0 600 150"></svg></div>
+  </details>
+</section>
+
+<section id="panel_water" hidden>
+  <h1><svg class="ic" aria-hidden="true"><use href="#i-droplet"/></svg> Water intake</h1>
+  <div class="card">
+    <div class="grid">
+      <div><label for="w_day">Date</label><input type="date" id="w_day"></div>
+      <div class="end"><button class="ghost" id="w_today">Today</button></div>
+      <div><label for="w_goal">Daily goal (ml)</label><input type="number" id="w_goal"></div>
+      <div class="end"><button class="ghost" id="w_saveGoal">Save goal</button></div>
+    </div>
+    <div class="bar"><i id="wBar"></i></div>
+    <p id="wText" class="goal-text"></p>
+  </div>
+
+  <details class="sec" id="w_add_sec" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Add water</span><span class="sum">for the selected date</span></summary>
+    <div class="body">
+      <div class="quick" id="wQuick">
+        <button class="ghost" data-ml="200">+200 ml</button><button class="ghost" data-ml="250">+250 ml</button>
+        <button class="ghost" data-ml="500">+500 ml</button><button class="ghost" data-ml="750">+750 ml</button>
+      </div>
+      <div class="grid" style="margin-top:10px">
+        <div><label for="w_ml">Custom amount (ml)</label><input type="number" id="w_ml" min="1"></div>
+        <div class="end"><button id="w_add">Add</button></div>
+      </div>
+      <p id="wMsg" class="msg"></p>
+    </div>
+  </details>
+
+  <details class="sec" id="w_list_sec" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-clipboard"/></svg> Drinks on this day</span><span class="sum" id="sum_wl"></span></summary>
+    <div class="body"><div class="scroll"><table id="wList"></table></div></div>
+  </details>
+
+  <details class="sec" id="w_trend_sec">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-trend"/></svg> Last 7 days</span><span class="sum">ml per day</span></summary>
+    <div class="body"><svg id="cWater" viewBox="0 0 600 150"></svg></div>
+  </details>
+</section>
+
+<section id="panel_sleep" hidden>
+  <h1><svg class="ic" aria-hidden="true"><use href="#i-moon"/></svg> Sleep tracker</h1>
+  <div class="grid hero" id="slKpis"></div>
+
+  <details class="sec" id="sl_log" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Log sleep</span><span class="sum">when you went to bed and when you woke up</span></summary>
+    <div class="body"><div class="grid">
+      <div><label for="sl_day">Date you woke up</label><input type="date" id="sl_day"></div>
+      <div><label for="sl_bed">Bedtime (night before)</label><input type="time" id="sl_bed" value="22:30"></div>
+      <div><label for="sl_wake">Woke up</label><input type="time" id="sl_wake" value="06:30"></div>
+      <div><label for="sl_q">How did you sleep?</label><select id="sl_q"><option value="">Not rated</option><option value="5">★★★★★ Excellent</option><option value="4">★★★★ Good</option><option value="3">★★★ Okay</option><option value="2">★★ Poor</option><option value="1">★ Very poor</option></select></div>
+      <div><label for="sl_notes">Notes</label><input id="sl_notes" placeholder="woke up twice, late coffee, etc."></div>
+      <div class="end"><button id="sl_save">Save sleep</button></div>
+    </div>
+    <p id="slPreview" class="hint"></p>
+    <p class="note">Bedtime before midnight counts as the evening before; after midnight counts as the same day. One entry per wake-up date, saving again replaces it.
+      <button type="button" class="ghost sm" id="sl_prev">Use today</button></p>
+    <p id="slMsg" class="msg"></p></div>
+  </details>
+
+  <details class="sec" id="sl_chart" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-trend"/></svg> Last 14 nights</span><span class="sum" id="sum_slc"></span></summary>
+    <div class="body"><svg id="cSleep" viewBox="0 0 600 170"></svg><p class="note" id="slNote"></p>
+      <div class="grid" style="max-width:360px;margin-top:10px"><div><label for="sl_goal">Sleep goal (hours per night)</label><input type="number" id="sl_goal" min="3" max="14" step="0.25"></div>
+        <div class="end"><button id="sl_saveGoal" class="ghost">Save goal</button></div></div><p id="slGoalMsg" class="msg"></p></div>
+  </details>
+
+  <details class="sec" id="sl_hist" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-clipboard"/></svg> History</span><span class="sum" id="sum_slh"></span></summary>
+    <div class="body"><div class="scroll"><table id="slHist"></table></div></div>
+  </details>
+  <p class="note">Most adults do well on 7-9 hours. Educational only, not medical advice.</p>
+</section>
+<section id="panel_weight" hidden>
+  <h1><svg class="ic" aria-hidden="true"><use href="#i-scale"/></svg> Weight tracker</h1>
+  <div class="grid hero" id="wtKpis"></div>
+
+  <details class="sec" id="wt_log" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Log weight</span><span class="sum">your latest weigh-in is used everywhere</span></summary>
+    <div class="body"><div class="grid">
+      <div><label for="wt_day">Date</label><input type="date" id="wt_day"></div>
+      <div><label for="wt_kg">Weight (kg)</label><input type="number" step="0.1" id="wt_kg" min="20" max="400"></div>
+      <div><label for="wt_notes">Notes</label><input id="wt_notes" placeholder="morning, after meal, etc."></div>
+      <div class="end"><button id="wt_save">Save weight</button></div>
+    </div>
+    <p id="wtMsg" class="msg"></p></div>
+  </details>
+
+  <details class="sec" id="wt_chart" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-trend"/></svg> Weight over time</span><span class="sum" id="sum_wtc"></span></summary>
+    <div class="body"><svg id="cWtLog" viewBox="0 0 600 150"></svg><p class="note" id="wtGoalNote"></p></div>
+  </details>
+
+  <details class="sec" id="wt_hist" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-clipboard"/></svg> History</span><span class="sum" id="sum_wth"></span></summary>
+    <div class="body"><div class="scroll"><table id="wtHist"></table></div></div>
+  </details>
+  <p class="note">Weigh at a consistent time of day for the most useful trend. Educational only, not medical advice.</p>
+</section>
+
+<section id="panel_bp" hidden>
+  <h1><svg class="ic" aria-hidden="true"><use href="#i-pulse"/></svg> Blood pressure</h1>
+  <div id="bpAlert" class="alert" hidden></div>
+  <div class="grid hero" id="bpKpis"></div>
+
+  <details class="sec" id="bp_log" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Record a reading</span><span class="sum">systolic / diastolic</span></summary>
+    <div class="body"><div class="grid">
+      <div><label for="bp_day">Date</label><input type="date" id="bp_day"></div>
+      <div><label for="bp_time">Time</label><input type="time" id="bp_time"></div>
+      <div><label for="bp_sys">Systolic (top)</label><input type="number" id="bp_sys" min="50" max="300" placeholder="120"></div>
+      <div><label for="bp_dia">Diastolic (bottom)</label><input type="number" id="bp_dia" min="30" max="200" placeholder="80"></div>
+      <div><label for="bp_pulse">Pulse (bpm, optional)</label><input type="number" id="bp_pulse" min="20" max="250"></div>
+      <div><label for="bp_notes">Notes</label><input id="bp_notes" placeholder="seated, left arm, after coffee…"></div>
+      <div class="end"><button id="bp_save">Save reading</button></div>
+    </div>
+    <p id="bpMsg" class="msg"></p>
+    <p class="hint">For consistent readings: sit quietly for 5 minutes, back supported, feet flat, arm at heart level, and avoid caffeine or exercise for 30 minutes before.</p></div>
+  </details>
+
+  <details class="sec" id="bp_chart" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-trend"/></svg> Trend</span><span class="sum" id="sum_bpc"></span></summary>
+    <div class="body"><svg id="cBp" viewBox="0 0 600 170"></svg>
+      <p class="note"><b style="color:#d64545">●</b> Systolic &nbsp; <b style="color:#4aa3df">●</b> Diastolic &nbsp; Dashed lines mark 120 and 80.</p></div>
+  </details>
+
+  <details class="sec" id="bp_hist" open>
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-clipboard"/></svg> History</span><span class="sum" id="sum_bph"></span></summary>
+    <div class="body"><div class="scroll"><table id="bpHist"></table></div></div>
+  </details>
+
+  <details class="sec" id="bp_ref">
+    <summary><span class="ttl"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> What the categories mean</span><span class="sum">adult ranges</span></summary>
+    <div class="body"><div class="scroll"><table>
+      <tr><th>Category</th><th>Systolic</th><th></th><th>Diastolic</th></tr>
+      <tr><td><span class="pill bp-normal">Normal</span></td><td>under 120</td><td>and</td><td>under 80</td></tr>
+      <tr><td><span class="pill bp-elevated">Elevated</span></td><td>120–129</td><td>and</td><td>under 80</td></tr>
+      <tr><td><span class="pill bp-stage1">Stage 1</span></td><td>130–139</td><td>or</td><td>80–89</td></tr>
+      <tr><td><span class="pill bp-stage2">Stage 2</span></td><td>140 or higher</td><td>or</td><td>90 or higher</td></tr>
+      <tr><td><span class="pill bp-crisis">Crisis</span></td><td>over 180</td><td>and/or</td><td>over 120</td></tr>
+    </table></div>
+    <p class="note">Based on AHA/ACC adult guidelines. A diagnosis needs several readings over time, so share your log with a doctor or nurse.
+      This tracker is educational and not medical advice.</p></div>
+  </details>
+</section>
+<section id="panel_analytics" hidden>
+  <div id="anRoot" aria-live="polite"></div>
+</section>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/static/icons.js"></script>
+<script src="/static/app.js"></script>
+<script src="/static/sleep.js"></script>
+<script src="/static/dashboard.js"></script>
+<script src="/static/analytics.js"></script>
+<script src="/static/tabs.js"></script>
+<script src="/static/ui.js"></script>
+<script src="/static/fx.js"></script>
+</body>
+</html>

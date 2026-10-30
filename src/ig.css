@@ -1,0 +1,73 @@
+/* ===== Layout fill + monochrome icons. Loads after stride.css. ===== */
+
+/* ---- monochrome line icons: always follow the text colour ---- */
+.ic { width: 1.12em; height: 1.12em; flex: none; vertical-align: -.2em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; color: inherit; }
+.ttl .ic, h1 .ic { margin-right: 6px; }
+h1 .ic { width: .95em; height: .95em; vertical-align: -.08em; }
+button .ic { margin-right: 2px; }
+button.icon .ic, .ghost.icon .ic, #palBtn .ic, #themeBtn .ic { margin: 0; width: 1.2em; height: 1.2em; }
+.dkpi .ico, .lastride .ico, .dfeed .ico, .dring .ic, .pal-in .ic, #palList li > i, .an-ax .ic, .an-axd .ic { color: var(--tx); }
+.dkpi .ico .ic, .lastride .ico .ic, .dfeed .ico .ic { width: 1.25rem; height: 1.25rem; margin: 0; }
+.dring .ic { width: 1.5rem; height: 1.5rem; }
+#palList li > i { display: inline-grid; place-items: center; font-style: normal; }
+#panel_analytics .an-ax span:first-child { display: grid; place-items: center; color: var(--tx); }
+.mlock .ic { margin: 0; }
+#eye .ic { margin: 0; width: 1.25em; height: 1.25em; }
+
+/* ---- fill the screen: scale the whole UI up on large displays (same effect as browser zoom) ---- */
+@media (min-width: 1280px) { html { zoom: 1.1; } }
+@media (min-width: 1600px) { html { zoom: 1.25; } }
+@media (min-width: 2300px) { html { zoom: 1.5; } }
+
+@media (min-width: 960px) {
+  main { max-width: 1760px; padding: 28px clamp(28px, 3vw, 64px) 90px; }
+  .topbar .toolbar.sub, .topbar .toolbar.nav { max-width: 1760px; padding-left: clamp(28px, 3vw, 64px); padding-right: clamp(28px, 3vw, 64px); }
+}
+
+/* ---- wide screens: collapsible sections sit two per row, tables and maps stay full width ---- */
+@media (min-width: 1700px) {
+  #sub_bike, #sub_pickle, #panel_food, #panel_water, #panel_sleep, #panel_weight, #panel_bp {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 18px; align-items: start;
+  }
+  #sub_bike[hidden], #sub_pickle[hidden], #panel_food[hidden], #panel_water[hidden], #panel_sleep[hidden], #panel_weight[hidden], #panel_bp[hidden] { display: none; }
+  #sub_bike > *, #sub_pickle > *, #panel_food > *, #panel_water > *, #panel_sleep > *, #panel_weight > *, #panel_bp > * { grid-column: 1 / -1; }
+  #sub_bike > details.sec, #sub_pickle > details.sec, #panel_food > details.sec, #panel_water > details.sec,
+  #panel_sleep > details.sec, #panel_weight > details.sec, #panel_bp > details.sec { grid-column: auto; margin-bottom: 0; }
+  #sub_bike > details.sec:has(table), #sub_pickle > details.sec:has(table), #panel_food > details.sec:has(table),
+  #panel_water > details.sec:has(table), #panel_sleep > details.sec:has(table), #panel_weight > details.sec:has(table),
+  #panel_bp > details.sec:has(table), #d_map { grid-column: 1 / -1; }
+  :is(#sub_bike, #sub_pickle, #panel_food, #panel_water, #panel_sleep, #panel_weight, #panel_bp) > details.sec:is(:has(.macro), :has(.two), :has(.leaflet-container)) { grid-column: 1 / -1; }
+  #sub_bike > details.sec, #sub_pickle > details.sec, #panel_food > details.sec, #panel_water > details.sec,
+  #panel_sleep > details.sec, #panel_weight > details.sec, #panel_bp > details.sec { margin-bottom: 14px; }
+}
+
+/* ---- finishing touches ---- */
+details.sec > summary .ttl { display: inline-flex; align-items: center; }
+.card, details.sec, .dkpi { transition: box-shadow .2s, border-color .2s; }
+
+/* ---- override the global svg{width:100%;display:block} and ring rotation for icons ---- */
+svg.ic { display: inline-block !important; width: 1.12em !important; height: 1.12em !important; transform: none !important; max-width: none; }
+h1 svg.ic { width: .95em !important; height: .95em !important; }
+.dkpi .ico svg.ic, .lastride .ico svg.ic, .dfeed .ico svg.ic { width: 1.25rem !important; height: 1.25rem !important; }
+.dring .lbl svg.ic { width: 1.1em !important; height: 1.1em !important; margin-right: 6px; vertical-align: -.2em; }
+.dring svg.ic { transform: none !important; }
+.dring .ic { width: 1.1em; height: 1.1em; }
+button svg.ic { vertical-align: -.2em; }
+
+/* ---- sidebar footer: tidy, full-width controls ---- */
+@media (min-width: 960px) {
+  .topbar .toolbar.main .tb-user { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 16px 4px 4px; align-items: stretch; }
+  .topbar .toolbar.main .tb-user .who { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin: 0 0 4px; font-size: 1rem; font-weight: 700; }
+  .topbar .toolbar.main .tb-user .who::before { content: attr(data-i); display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--ac); color: #fff; font-size: .9rem; font-weight: 700; text-transform: uppercase; }
+  .topbar .toolbar.main .tb-user a.btnlink { grid-column: 1 / -1; justify-content: center; text-align: center; min-height: 40px; display: flex; align-items: center; border-radius: 12px; font-size: .92rem; }
+  .topbar .toolbar.main .tb-user button.ghost, .topbar .toolbar.main .tb-user button { min-height: 40px; width: 100%; margin: 0; display: flex; align-items: center; justify-content: center; border-radius: 12px; padding: 0 10px; }
+  .topbar .toolbar.main .tb-user #logout { grid-column: 1 / -1; font-size: .92rem; gap: 8px; }
+  .topbar .toolbar.main .tb-user #logout::before { content: ""; width: 1.1em; height: 1.1em; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 4H5v16h5M15 8l4 4-4 4M19 12H9'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 4H5v16h5M15 8l4 4-4 4M19 12H9'/%3E%3C/svg%3E") center/contain no-repeat; }
+}
+
+/* ---- Manage users page (no sidebar): readable header in light and dark ---- */
+body:not(.app) .toolbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+body:not(.app) .tb-user { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-left: auto; padding: 0; border: 0; }
+body:not(.app) .tb-user .who { flex: 0 0 auto; color: var(--tx); font-weight: 700; max-width: none; font-size: 1rem; margin: 0; }
+body:not(.app) .tb-user button, body:not(.app) .tb-user a.btnlink { width: auto; min-height: 38px; padding: 0 14px; display: inline-flex; align-items: center; }
+body:not(.app) main { max-width: 1100px; }
