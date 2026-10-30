@@ -28,7 +28,7 @@ async function load() {
 const hasMap = typeof L !== "undefined";
 let rideBounds = null, pm, rm, rideLayer, routeLine = null, routeGeom = null, pins = { s: null, e: null };
 const dot = (c, t) => L.divIcon({ className: "", html: `<div class="pin" style="background:${c}">${t}</div>`, iconSize: [26, 26], iconAnchor: [13, 13] });
-const tiles = () => L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap contributors" });
+const tiles = () => L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap contributors", referrerPolicy: "strict-origin-when-cross-origin" });
 
 function initMaps() {
   if (!hasMap) { $("routeInfo").textContent = "Map library could not load (check internet). You can still type distance manually."; return; }
